@@ -29,5 +29,5 @@ jobs:
     #   github.event.pull_request.user.login == 'external-contributor' ||
     #   github.event.pull_request.user.login == 'new-developer' ||
     #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-    uses: OWNER/.github/.github/workflows/claude-code-review-reusable.yml@main
+    uses: churnkey/.github/.github/workflows/claude-code-review-reusable.yml@main
     secrets: inherit
