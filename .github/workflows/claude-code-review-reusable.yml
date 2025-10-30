@@ -1,0 +1,71 @@
+name: Claude Code Review (Reusable)
+
+on:
+  workflow_call:
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: true
+        description: "Claude Code OAuth token for PR reviews"
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code Review
+        id: claude-review
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Review PR #${{ github.event.pull_request.number }} in ${{ github.repository }} and post your review using `gh pr comment`.
+
+            **Before reviewing:**
+            1. Read the PR description to understand intent and context
+            2. Examine the full diff thoroughly - don't just skim
+            3. Consider how changes interact with existing code
+
+            **Review Format:**
+
+            ## ⭐ Rating: [X]/5
+            [One sentence: what this PR does + why this rating]
+
+            ## 🚫 Must Fix Before Merge
+            [Only if rating ≤ 3. List 1-3 blocking issues with file:line references. Skip if none]
+
+            ## 🎯 Issues
+            ### 🔴 Critical (security, data loss, breaking changes)
+            ### 🟠 High (bugs, performance, quality concerns)
+            ### 🟡 Medium (maintainability, missing tests)
+            [Use file:line references. Skip empty priority levels]
+
+            ---
+
+            **Review Guidelines:**
+            1. Rating scale: 5=excellent/ship it, 4=good/minor fixes, 3=needs work, 2=significant issues, 1=major rework needed
+            2. Check for CLAUDE.md or similar convention docs in the repo root - follow those conventions if present
+            3. Flag: security issues, data risks, breaking changes, missing error handling, console.log, any violations
+            4. Be ruthlessly concise - one sentence per issue
+            5. Always include file paths with line numbers: `path/to/file.ts:42`
+            6. Skip empty sections entirely
+            7. Keep excellent PRs brief
+
+            Post using:
+            ```bash
+            gh pr comment ${{ github.event.pull_request.number }} --body "$(cat <<'EOF'
+            [your review here]
+            EOF
+            )"
+            ```
+
+          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
