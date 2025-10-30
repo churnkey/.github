@@ -1,0 +1,6 @@
+{
+  "name": "Claude Code Review",
+  "description": "Automated PR reviews using Claude Code. Reviews code quality, security, and adherence to conventions.",
+  "iconName": "code-review",
+  "categories": ["Automation", "Code Review"]
+}

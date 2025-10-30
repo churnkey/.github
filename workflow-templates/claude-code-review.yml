@@ -1,0 +1,33 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "**/*.vue"
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.py"
+      - "**/*.sql"
+      - "**/*.yaml"
+      - "**/*.yml"
+      - "**/*.json"
+      - "!**/package-lock.json"
+      - "!**/yarn.lock"
+      - "!**/*.min.js"
+      - "!**/dist/**"
+      - "!**/build/**"
+      - "!**/.next/**"
+      - "!**/node_modules/**"
+
+jobs:
+  review:
+    # Optional: Filter by PR author
+    # if: |
+    #   github.event.pull_request.user.login == 'external-contributor' ||
+    #   github.event.pull_request.user.login == 'new-developer' ||
+    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    uses: OWNER/.github/.github/workflows/claude-code-review-reusable.yml@main
+    secrets: inherit
