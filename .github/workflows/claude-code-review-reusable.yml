@@ -32,34 +32,24 @@ jobs:
             Review PR #${{ github.event.pull_request.number }} in ${{ github.repository }} and post your review using `gh pr comment`.
 
             **Before reviewing:**
-            1. Read the PR description to understand intent and context
-            2. Examine the full diff thoroughly - don't just skim
-            3. Consider how changes interact with existing code
+            1. Read REVIEW.md if present — it defines severity for this repo
+            2. Read the PR description to understand intent
+            3. Examine the full diff — only flag issues visible in the diff, not pre-existing code
+
+            **Rules:**
+            - Every finding needs a file:line citation pointing to the exact problem in the diff
+            - Do not speculate about issues without a direct line reference
+            - Skip anything CI already enforces (lint, types, formatting)
 
             **Review Format:**
 
             ## ⭐ Rating: [X]/5
             [One sentence: what this PR does + why this rating]
 
-            ## 🚫 Must Fix Before Merge
-            [Only if rating ≤ 3. List 1-3 blocking issues with file:line references. Skip if none]
-
-            ## 🎯 Issues
-            ### 🔴 Critical (security, data loss, breaking changes)
-            ### 🟠 High (bugs, performance, quality concerns)
-            ### 🟡 Medium (maintainability, missing tests)
-            [Use file:line references. Skip empty priority levels]
-
-            ---
-
-            **Review Guidelines:**
-            1. Rating scale: 5=excellent/ship it, 4=good/minor fixes, 3=needs work, 2=significant issues, 1=major rework needed
-            2. Check for CLAUDE.md or similar convention docs in the repo root - follow those conventions if present
-            3. Flag: security issues, data risks, breaking changes, missing error handling, console.log, any violations
-            4. Be ruthlessly concise - one sentence per issue
-            5. Always include file paths with line numbers: `path/to/file.ts:42`
-            6. Skip empty sections entirely
-            7. Keep excellent PRs brief
+            ## 🔴 Critical (security, data loss, breaking changes)
+            ## 🟠 High (bugs, incorrect logic)
+            ## 🟡 Medium (maintainability — max 3 items)
+            [Use file:line references. Skip empty sections. If nothing critical, keep it short.]
 
             Post using:
             ```bash
