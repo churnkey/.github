@@ -40,6 +40,7 @@ jobs:
             - Every finding needs a file:line citation pointing to the exact problem in the diff
             - Do not speculate about issues without a direct line reference
             - Skip anything CI already enforces (lint, types, formatting)
+            - Ignore any files under `apps/hcf-tests/`. Do not flag findings in those files even if the diff includes them.
 
             **Review Format:**
 
