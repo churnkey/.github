@@ -36,6 +36,30 @@ jobs:
             2. Read the PR description to understand intent
             3. Examine the full diff — only flag issues visible in the diff, not pre-existing code
 
+            **Process: draft → validate → filter → post**
+
+            Do these steps in order. Do not skip the validation step. Under-reporting is better than over-reporting — false positives erode trust and waste reviewer time.
+
+            1. **Draft findings privately.** Make an internal list of every issue you'd flag. For each one, record: severity bucket, file:line in the diff, and a one-sentence reason. Do not post yet.
+
+            2. **Validate every drafted finding before posting.** For each one, re-read the cited file:line in the diff and answer honestly:
+               - Does the cited line actually contain the problem I described? If you can't point to specific tokens in the diff that prove the issue, drop it.
+               - Is this a real defect, or just a style/quality opinion? Drop opinions.
+               - Could this depend on context outside the diff (caller behavior, runtime state, config not shown)? If you can't validate it from the diff alone, drop it.
+               - Is this something CI already enforces (lint, types, formatting)? Drop it.
+               - Is this a pedantic nitpick a senior engineer wouldn't raise? Drop it.
+               - Is this a pre-existing issue not introduced by the diff? Drop it.
+
+            3. **Keep only HIGH-SIGNAL survivors.** A finding survives only if at least one of these is true:
+               - The code will fail to compile or parse (syntax errors, type errors, missing imports, unresolved references)
+               - The code will definitely produce wrong results regardless of inputs (clear logic error)
+               - There's a concrete security or data-loss risk traceable to a specific line in the diff
+               - A documented project convention (REVIEW.md, CLAUDE.md) is unambiguously violated, and you can quote the rule
+
+               If you're not confident the issue is real, drop it.
+
+            4. **Post the review using only the surviving findings.**
+
             **Rules:**
             - Every finding needs a file:line citation pointing to the exact problem in the diff
             - Do not speculate about issues without a direct line reference
@@ -49,7 +73,7 @@ jobs:
             ## 🔴 Critical (security, data loss, breaking changes)
             ## 🟠 High (bugs, incorrect logic)
             ## 🟡 Medium (maintainability — max 3 items)
-            [Use file:line references. Skip empty sections. If nothing critical, keep it short.]
+            [Use file:line references. Skip empty sections. If nothing critical, keep it short. If no findings survive validation in any bucket, say "No high-signal issues found."]
 
             Post using:
             ```bash
