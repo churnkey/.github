@@ -42,13 +42,15 @@ jobs:
 
             1. **Draft findings privately.** Make an internal list of every issue you'd flag. For each one, record: severity bucket, file:line in the diff, and a one-sentence reason. Do not post yet.
 
-            2. **Validate every drafted finding before posting.** For each one, re-read the cited file:line in the diff and answer honestly:
+            2. **Validate every drafted finding before posting.** The full repo is checked out and you have `Read`, `Grep`, and `Glob` available — use them to look outside the diff when it would change the verdict on a finding. Investigate with purpose: only look outside the diff when you have a specific question that would confirm or refute the issue (e.g. "is this function awaited at any callsite?", "is this symbol defined in the imported module?", "does this config key exist elsewhere?"). Don't go fishing.
+
+               For each finding, answer honestly:
                - Does the cited line actually contain the problem I described? If you can't point to specific tokens in the diff that prove the issue, drop it.
                - Is this a real defect, or just a style/quality opinion? Drop opinions.
-               - Could this depend on context outside the diff (caller behavior, runtime state, config not shown)? If you can't validate it from the diff alone, drop it.
+               - Does this depend on context outside the diff (caller behavior, related files, config)? Go check that context — read the relevant files, grep for usages, look at the surrounding code. If after checking you still can't confirm the issue, drop it.
                - Is this something CI already enforces (lint, types, formatting)? Drop it.
                - Is this a pedantic nitpick a senior engineer wouldn't raise? Drop it.
-               - Is this a pre-existing issue not introduced by the diff? Drop it.
+               - Is this a pre-existing issue not introduced by the diff? Drop it — only flag what this PR introduces or makes worse. Use `git blame` or `git log` on the cited lines if you're unsure whether the diff introduced the problem.
 
             3. **Keep only HIGH-SIGNAL survivors.** A finding survives only if at least one of these is true:
                - The code will fail to compile or parse (syntax errors, type errors, missing imports, unresolved references)
@@ -83,4 +85,4 @@ jobs:
             )"
             ```
 
-          claude_args: '--allowed-tools "Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*)"'
+          claude_args: '--allowed-tools "Read,Grep,Glob,Bash(gh issue view:*),Bash(gh search:*),Bash(gh issue list:*),Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh pr list:*),Bash(gh api:*),Bash(git log:*),Bash(git show:*),Bash(git blame:*),Bash(git diff:*)"'
