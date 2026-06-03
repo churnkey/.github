@@ -2,6 +2,12 @@ name: Claude Code Review (Reusable)
 
 on:
   workflow_call:
+    inputs:
+      allowed_bots:
+        required: false
+        type: string
+        default: "cursor"
+        description: "Comma-separated list of bot actors allowed to trigger the review (or '*' for all). Defaults to Cursor so bot-opened PRs are reviewed. Avoid '*' on public repos."
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         required: true
@@ -28,6 +34,7 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_bots: ${{ inputs.allowed_bots }}
           prompt: |
             Review PR #${{ github.event.pull_request.number }} in ${{ github.repository }} and post your review using `gh pr comment`.
 
