@@ -8,6 +8,11 @@ on:
         type: string
         default: "cursor"
         description: "Comma-separated list of bot actors allowed to trigger the review (or '*' for all). Defaults to Cursor so bot-opened PRs are reviewed. Avoid '*' on public repos."
+      show_full_output:
+        required: false
+        type: boolean
+        default: false
+        description: "Print Claude's full SDK output in the job log. Leave off normally: the log would carry every tool result, and the PR head is untrusted. Turn on temporarily when a review fails and the summary alone doesn't say why — without it the action reports only is_error/num_turns/cost and redacts the message. Rerunning with --debug does NOT lift that redaction."
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         required: true
@@ -35,6 +40,7 @@ jobs:
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_bots: ${{ inputs.allowed_bots }}
+          show_full_output: ${{ inputs.show_full_output }}
           prompt: |
             Review PR #${{ github.event.pull_request.number }} in ${{ github.repository }} and post your review using `gh pr comment`.
 
